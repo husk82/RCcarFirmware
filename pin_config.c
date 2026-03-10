@@ -28,15 +28,17 @@ Motor4: PB15 -> IN1
 
 #include "pin_config_h.h"
 
-void PIN_Config_Init(void)
-{
-	Motor_Config motors[4] =
+// Motor's PWM and Dir pins config
+Motor_Config motors[4] =
 	{
 			{GPIOA, 0, TIM2, 1, GPIOB, 0, GPIOB, 1},
 			{GPIOA, 1, TIM2, 2, GPIOB, 10, GPIOB, 12},
 			{GPIOA, 2, TIM2, 3, GPIOB, 13, GPIOB, 14},
 			{GPIOA, 3, TIM2, 4, GPIOB, 15, GPIOA, 8}
 	};
+
+void PIN_Config_Init(void)
+{
 	
 	GPIO_Init(STATUS_LED_PORT, STATUS_LED_PIN, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NOPUPD);
 

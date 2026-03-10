@@ -76,8 +76,8 @@ extern Motor_Config motors[4];
 #define PWM_TIMER TIM2
 
 // Motor PWM's PSC, ARR
-#define PWM_PSC 15
-#define PWM_ARR 999
+#define PWM_PSC 0
+#define PWM_ARR 1249
 
 
 void PIN_Config_Init(void);

@@ -48,3 +48,4 @@ void GPIO_Toggle_Pin(GPIO_TypeDef *GPIOx, uint16_t pin)
 {
 	GPIOx->ODR ^= (1 << pin);
 }
+
