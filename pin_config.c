@@ -50,10 +50,20 @@ PWM Frequency controlled by PSC and ARR
 Direction controlled by GPIO outputs
 
 */
+
+
+/*
+PWM Frequency Calculation
+
+F_PWM = TimerClock / ((PSC + 1) * (ARR + 1))
+
+16 MHz / ((0 + 1) * (1249 + 1))
+= 12.8 kHz
+*/
+PWM_Config pwm = {TIM2, 0 , PWM_ARR};
+
 #define MOTOR_COUNT 4
 
-PWM_Config pwm = {TIM2, 0 , 1249};
-	
 Motor_Config motors[4] =
 {
     {GPIOA, 0, GPIO_AF1, TIM2, 1, GPIOB, 0,  GPIOB, 1,  1.00f},  // LF
@@ -78,18 +88,18 @@ void PIN_Config_Init(void)
 	
 	// Init STATUS LED   
 	GPIO_Init(GPIOA, 5, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NOPUPD);
-	GPIO_Set_Pin(GPIOA, 5); 
-	
-	// Init STANDBY PORT
-  GPIO_Init(GPIOA, 4, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NOPUPD);
-	GPIO_Set_Pin(GPIOA, 4);
+	GPIO_Reset_Pin(GPIOA, 5); 
 	
 	// Init MOTOR PWM PINS and set AF
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < MOTOR_COUNT; i++)
 	{
 		Motor_Config *motor = &motors[i];
 		GPIO_Init(motor->pwm_port, motor->pwm_pin, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPUPD);
 		GPIO_Set_AF(motor->pwm_port, motor->pwm_pin, motor->pwm_af);
+		GPIO_Init(motor->dir1_port, motor->dir1_pin, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPUPD); 
+		GPIO_Init(motor->dir2_port, motor->dir2_pin, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPUPD); 
+		GPIO_Reset_Pin(motor->dir1_port, motor->dir1_pin);
+		GPIO_Reset_Pin(motor->dir2_port, motor->dir2_pin);
 	}
 	
 	TIM_PWM_Init(pwm.timer, pwm.psc, pwm.arr);          //PSC = 0 and ARR = 1249
@@ -97,16 +107,21 @@ void PIN_Config_Init(void)
 	for (int i = 0; i < MOTOR_COUNT; i++)
 	{
     TIM_PWM_Enable_Channel(motors[i].timer, motors[i].channel);
+		TIM_PWM_Set_Duty(motors[i].timer, motors[i].channel, 0);
 	}
 	
 	TIM_Start(TIM2);
 	
 	// Init USART PINS and set AF
-	GPIO_Init(usart1.tx_port, usart1.tx_pin, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPUPD);
-	GPIO_Init(usart1.rx_port, usart1.rx_pin, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPUPD);
+	GPIO_Init(usart1.tx_port, usart1.tx_pin, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_VERYHIGH, GPIO_NOPUPD);
+	GPIO_Init(usart1.rx_port, usart1.rx_pin, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_VERYHIGH, GPIO_PULLUP);
 	
 	GPIO_Set_AF(usart1.tx_port, usart1.tx_pin, usart1.af);
 	GPIO_Set_AF(usart1.rx_port, usart1.rx_pin, usart1.af);
 
-	USART_Init(usart1.instance, 0x0683);
+	USART_Init(usart1.instance, 16000000, 115200);
+	
+	// Init STANDBY PORT
+  GPIO_Init(GPIOA, 4, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NOPUPD);
+	GPIO_Set_Pin(GPIOA, 4);
 }

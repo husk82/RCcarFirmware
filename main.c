@@ -1,22 +1,20 @@
 #include "motor.h"
 #include "pin_config_h.h"
-#include "usart_h.h"
+#include "controller.h"
+#include "gpio_h.h"
 
 int main(void)
 {
 	PIN_Config_Init();
-	
-	Motor_Set_Speed(LF, 500);
-	Motor_Set_Direction(LF, 1);
-	Motor_Set_Speed(LR, 650);
-	Motor_Set_Direction(LR, 1);
-	Motor_Set_Speed(RF, 900);
-	Motor_Set_Direction(RF, 0);
-	Motor_Set_Speed(RR, 1000);
-	Motor_Set_Direction(RR, 0);
+	__enable_irq();
 	
 	while(1)
 	{
+		char cmd = Controller_Get_Command();
 		
+		if (cmd == 'L')
+			GPIO_Set_Pin(GPIOA, 5);
+		else
+			GPIO_Reset_Pin(GPIOA, 5);
 	}
 }

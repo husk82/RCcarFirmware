@@ -4,6 +4,16 @@
 #include <stdint.h>
 #include "stm32f4xx.h"
 
+/*
+TIM2 Input Clock = 16 MHz (HSI)
+
+PWM Frequency:
+16 MHz / ((PSC + 1) * (ARR + 1))
+
+= 12.8 kHz
+*/
+#define PWM_ARR 1249
+
 // Timer base config
 void TIM_PWM_Init(TIM_TypeDef *TIMx, uint32_t psc, uint32_t arr);
 

@@ -1,9 +1,11 @@
 --cpu=Cortex-M4.fp.sp
 ".\objects\main.o"
 ".\objects\motor.o"
+".\objects\controller.o"
 ".\objects\rcc.o"
 ".\objects\gpio.o"
 ".\objects\tim.o"
+".\objects\usart.o"
 ".\objects\pin_config.o"
 ".\objects\startup_stm32f411xe.o"
 ".\objects\system_stm32f4xx.o"

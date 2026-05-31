@@ -3,7 +3,7 @@
 
 #include "stm32f411xe.h"
 
-void USART_Init(USART_TypeDef *USARTx, uint32_t baudrate);
+void USART_Init(USART_TypeDef *USARTx, uint32_t pclk, uint32_t baud);
 
 void USART_Write_Char(USART_TypeDef *USARTx, char ch);
 

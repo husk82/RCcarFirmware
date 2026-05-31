@@ -6,7 +6,7 @@
 // Hardware Config table from pin_config
 extern Motor_Config motors[4];
 
-#define MAX_DUTY (1249 + 1)
+#define MAX_DUTY (PWM_ARR + 1)
 
 void Motor_Set_Speed(MOTOR_ID motor_id, uint32_t duty)
 {
@@ -14,11 +14,11 @@ void Motor_Set_Speed(MOTOR_ID motor_id, uint32_t duty)
 	
 	Motor_Config *motor = &motors[motor_id];
 	
-	duty = (uint32_t)(duty * motor->calibration);
+	float scaled = duty * motor->calibration;
 	
-	if (duty > MAX_DUTY) duty = MAX_DUTY;
+	if (scaled > MAX_DUTY) scaled = MAX_DUTY;
 
-	TIM_PWM_Set_Duty(motor->timer, motor->channel, duty);
+	TIM_PWM_Set_Duty(motor->timer, motor->channel, (uint32_t) scaled);
 	
 }
 void Motor_Set_Direction(MOTOR_ID motor_id, uint8_t dir)
